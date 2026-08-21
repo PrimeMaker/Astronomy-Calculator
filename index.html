@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Astronomy Calculator</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 30px;
+        background: #0b1020;
+        color: white;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: auto;
+    }
+
+    .calculator {
+        background: #151d35;
+        padding: 25px;
+        border-radius: 15px;
+        margin-top: 20px;
+    }
+
+    select, input, button {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: none;
+        font-size: 16px;
+    }
+
+    button {
+        background: #4f8cff;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background: #306fd6;
+    }
+
+    .result {
+        margin-top: 20px;
+        padding: 15px;
+        background: #0a0f1f;
+        border-radius: 8px;
+        font-size: 18px;
+    }
+
+    .formula {
+        color: #aab7d4;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🌌 Astronomy & Physics Calculator</h1>
+
+    <div class="calculator">
+
+        <label>Select Calculation:</label>
+
+        <select id="calculation" onchange="updateInputs()">
+            <option value="orbitalVelocity">Orbital Velocity</option>
+            <option value="escapeVelocity">Escape Velocity</option>
+            <option value="gravityForce">Gravitational Force</option>
+            <option value="orbitalPeriod">Orbital Period</option>
+            <option value="schwarzschild">Schwarzschild Radius</option>
+            <option value="luminosity">Blackbody Luminosity</option>
+        </select>
+
+        <div id="formula" class="formula"></div>
+
+        <div id="inputs"></div>
+
+        <button onclick="calculate()">Calculate</button>
+
+        <div class="result" id="result">
+            Enter values and press Calculate.
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const G = 6.67430e-11;
+const C = 299792458;
+const SIGMA = 5.670374419e-8;
+
+function updateInputs() {
+
+    const type = document.getElementById("calculation").value;
+    const inputs = document.getElementById("inputs");
+    const formula = document.getElementById("formula");
+
+    let html = "";
+
+    if (type === "orbitalVelocity") {
+
+        formula.innerHTML = "Formula: v = √(GM / r)";
+
+        html = `
+        <input type="number" id="mass"
+        placeholder="Mass of central body (kg)">
+
+        <input type="number" id="radius"
+        placeholder="Orbital radius from center (m)">
+        `;
+
+    }
+
+    else if (type === "escapeVelocity") {
+
+        formula.innerHTML = "Formula: v = √(2GM / r)";
+
+        html = `
+        <input type="number" id="mass"
+        placeholder="Mass of celestial body (kg)">
+
+        <input type="number" id="radius"
+        placeholder="Distance from center (m)">
+        `;
+    }
+
+    else if (type === "gravityForce") {
+
+        formula.innerHTML = "Formula: F = Gm₁m₂ / r²";
+
+        html = `
+        <input type="number" id="mass1"
+        placeholder="Mass 1 (kg)">
+
+        <input type="number" id="mass2"
+        placeholder="Mass 2 (kg)">
+
+        <input type="number" id="distance"
+        placeholder="Distance between centers (m)">
+        `;
+    }
+
+    else if (type === "orbitalPeriod") {
+
+        formula.innerHTML = "Formula: T = 2π√(r³ / GM)";
+
+        html = `
+        <input type="number" id="mass"
+        placeholder="Mass of central body (kg)">
+
+        <input type="number" id="radius"
+        placeholder="Orbital radius (m)">
+        `;
+    }
+
+    else if (type === "schwarzschild") {
+
+        formula.innerHTML = "Formula: Rₛ = 2GM / c²";
+
+        html = `
+        <input type="number" id="mass"
+        placeholder="Mass of object (kg)">
+        `;
+    }
+
+    else if (type === "luminosity") {
+
+        formula.innerHTML = "Formula: L = 4πR²σT⁴";
+
+        html = `
+        <input type="number" id="radius"
+        placeholder="Radius of star (m)">
+
+        <input type="number" id="temperature"
+        placeholder="Surface temperature (K)">
+        `;
+    }
+
+    inputs.innerHTML = html;
+    document.getElementById("result").innerHTML =
+        "Enter values and press Calculate.";
+}
+
+
+function calculate() {
+
+    const type = document.getElementById("calculation").value;
+    let result;
+
+    try {
+
+        if (type === "orbitalVelocity") {
+
+            const M = Number(document.getElementById("mass").value);
+            const r = Number(document.getElementById("radius").value);
+
+            result = Math.sqrt(G * M / r);
+
+            showResult(result, "m/s");
+        }
+
+        else if (type === "escapeVelocity") {
+
+            const M = Number(document.getElementById("mass").value);
+            const r = Number(document.getElementById("radius").value);
+
+            result = Math.sqrt(2 * G * M / r);
+
+            showResult(result, "m/s");
+        }
+
+        else if (type === "gravityForce") {
+
+            const m1 = Number(document.getElementById("mass1").value);
+            const m2 = Number(document.getElementById("mass2").value);
+            const r = Number(document.getElementById("distance").value);
+
+            result = G * m1 * m2 / (r * r);
+
+            showResult(result, "Newtons (N)");
+        }
+
+        else if (type === "orbitalPeriod") {
+
+            const M = Number(document.getElementById("mass").value);
+            const r = Number(document.getElementById("radius").value);
+
+            result =
+                2 * Math.PI *
+                Math.sqrt(Math.pow(r, 3) / (G * M));
+
+            const hours = result / 3600;
+
+            document.getElementById("result").innerHTML =
+                `Orbital Period: <b>${result.toExponential(6)} seconds</b><br>
+                 Approximately: <b>${hours.toFixed(2)} hours</b>`;
+        }
+
+        else if (type === "schwarzschild") {
+
+            const M = Number(document.getElementById("mass").value);
+
+            result = 2 * G * M / (C * C);
+
+            showResult(result, "meters");
+        }
+
+        else if (type === "luminosity") {
+
+            const R = Number(document.getElementById("radius").value);
+            const T = Number(document.getElementById("temperature").value);
+
+            result =
+                4 * Math.PI *
+                Math.pow(R, 2) *
+                SIGMA *
+                Math.pow(T, 4);
+
+            showResult(result, "Watts (W)");
+        }
+
+    }
+
+    catch (error) {
+
+        document.getElementById("result").innerHTML =
+            "Error: Please enter valid values.";
+
+    }
+}
+
+
+function showResult(value, unit) {
+
+    if (!isFinite(value) || value <= 0) {
+
+        document.getElementById("result").innerHTML =
+            "Please enter valid positive values.";
+
+        return;
+    }
+
+    document.getElementById("result").innerHTML =
+        `Result: <b>${value.toExponential(6)} ${unit}</b>`;
+
+}
+
+
+updateInputs();
+
+</script>
+
+</body>
+</html>
